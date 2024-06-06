@@ -9,7 +9,6 @@ from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 
-
 """
 librerias que conectan el frontend con el api gateway
 """
@@ -27,19 +26,20 @@ cors = CORS(app)
 #############################################################################################################
 """ metodo para realizar login mediante un token """
 
-app.config["JWT_SECRET_KEY"] = "super-secret" # Cambiar por el que se conveniente
+app.config["JWT_SECRET_KEY"] = "super-secret"  # Cambiar por el que se conveniente
 jwt = JWTManager(app)
+
 
 @app.route("/login", methods=["POST"])
 def create_token():
     data = request.get_json()
     headers = {"Content-Type": "application/json; charset=utf-8"}
-    url=dataConfig["url-backend-security"]+'/usuarios/validar'
-    response =requests.post(url, json=data, headers=headers)
+    url = dataConfig["url-backend-security"] + '/usuarios/validar'
+    response = requests.post(url, json=data, headers=headers)
     if response.status_code == 200:
         user = response.json()
-        expires = datetime.timedelta(seconds=60 * 60*24)
-        access_token = create_access_token(identity=user,expires_delta=expires)
+        expires = datetime.timedelta(seconds=60 * 60 * 24)
+        access_token = create_access_token(identity=user, expires_delta=expires)
         return jsonify({"token": access_token, "user_id": user["_id"]})
     else:
         return jsonify({"msg": "Bad username or password"}), 401
@@ -61,12 +61,16 @@ def before_request_callback():
                 return jsonify({"message": "Permission denied"}), 401
         else:
             return jsonify({"message": "Permission denied"}), 401
+
+
 def limpiarURL(url):
     partes = url.split("/")
     for laParte in partes:
         if re.search('\\d', laParte):
             url = url.replace(laParte, "?")
     return url
+
+
 def validarPermiso(endPoint, metodo, idRol):
     url = dataConfig["url-backend-security"] + "/permisos-roles/validar-permiso/rol/" + str(idRol)
     tienePermiso = False
@@ -83,6 +87,7 @@ def validarPermiso(endPoint, metodo, idRol):
     except:
         pass
     return tienePermiso
+
 
 ##############################--REDIRECCIONAMIENTO DE MICROSERVICIO SEGURIDAD--######################
 
@@ -106,6 +111,7 @@ def getClientes():
     json = response.json()
     return jsonify(json)
 
+
 @app.route("/clientes", methods=['POST'])
 def crearCliente():
     data = request.get_json()
@@ -115,6 +121,7 @@ def crearCliente():
     json = response.json()
     return jsonify(json)
 
+
 @app.route("/clientes/<string:id>", methods=['GET'])
 def getCliente(id):
     headers = {"Content-Type": "application/json; charset=utf-8"}
@@ -122,6 +129,7 @@ def getCliente(id):
     response = requests.get(url, headers=headers)
     json = response.json()
     return jsonify(json)
+
 
 @app.route("/clientes/<string:id>", methods=['PUT'])
 def modificarCliente(id):
@@ -132,6 +140,7 @@ def modificarCliente(id):
     json = response.json()
     return jsonify(json)
 
+
 @app.route("/clientes/<string:id>", methods=['DELETE'])
 def eliminarCliente(id):
     headers = {"Content-Type": "application/json; charset=utf-8"}
@@ -140,9 +149,109 @@ def eliminarCliente(id):
     json = response.json()
     return jsonify(json)
 
+
 ##########################--redireccionamiento producto--#############################################
+@app.route("/productos", methods=['GET'])
+def getProductos():
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-inventory"] + '/productos'
+    response = requests.get(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+
+@app.route("/productos", methods=['POST'])
+def crearProducto():
+    data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-inventory"] + '/productos'
+    response = requests.post(url, headers=headers, json=data)
+    json = response.json()
+    return jsonify(json)
+
+
+@app.route("/productos/<string:id>", methods=['GET'])
+def getProducto(id):
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-inventory"] + '/productos/' + id
+    response = requests.get(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+
+@app.route("/productos/<string:id>", methods=['PUT'])
+def modificarProducto(id):
+    data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-inventory"] + '/productos/' + id
+    response = requests.put(url, headers=headers, json=data)
+    json = response.json()
+    return jsonify(json)
+
+
+@app.route("/productos/<string:id>", methods=['DELETE'])
+def eliminarProducto(id):
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-inventory"] + '/productos/' + id
+    response = requests.delete(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+
+@app.route("/productos/<string:id>/proveedor/<string:id_proveedor>", methods=['PUT'])
+def asignarProveedorAProducto(id, id_proveedor):
+    #data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-inventory"] + '/productos/' + id + '/proveedor/' + id_proveedor
+    response = requests.put(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
 
 ##########################--redireccionamiento proveedor--#############################################
+@app.route("/proveedores", methods=['GET'])
+def getProveedores():
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-inventory"] + '/proveedores'
+    response = requests.get(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/proveedores", methods=['POST'])
+def crearProveedor():
+    data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-inventory"] + '/proveedores'
+    response = requests.post(url, headers=headers, json=data)
+    json = response.json()
+    return jsonify(json)
+@app.route("/proveedores/<string:id>", methods=['GET'])
+def getProveedor(id):
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-inventory"] + '/proveedores/' + id
+    response = requests.get(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/proveedores/<string:id>", methods=['PUT'])
+def modificarProveedor(id):
+    data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-inventory"] + '/proveedores/' + id
+    response = requests.put(url, headers=headers, json=data)
+    json = response.json()
+    return jsonify(json)
+@app.route("/proveedores/<string:id>", methods=['DELETE'])
+def eliminarProveedor(id):
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-inventory"] + '/proveedores/' + id
+    response = requests.delete(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+
+
+
 
 ##########################--redireccionamiento comprobante venta--#############################################
 
@@ -174,11 +283,13 @@ def crearComprobante(id_producto, id_cliente):
     return jsonify(json)
 
 
-@app.route("/comprobantes/<string:id_comprobante>/producto/<string:id_producto>/cliente/<string:id_cliente>", methods=['PUT'])
+@app.route("/comprobantes/<string:id_comprobante>/producto/<string:id_producto>/cliente/<string:id_cliente>",
+           methods=['PUT'])
 def modificarComprobante(id_comprobante, id_producto, id_cliente):
     data = request.get_json()
     headers = {"Content-Type": "application/json; charset=utf-8"}
-    url = dataConfig["url-backend-inventory"] + '/comprobantes/' + id_comprobante + '/producto/' + id_producto + '/cliente/' + id_cliente
+    url = dataConfig[
+              "url-backend-inventory"] + '/comprobantes/' + id_comprobante + '/producto/' + id_producto + '/cliente/' + id_cliente
     response = requests.put(url, headers=headers, json=data)
     json = response.json()
     return jsonify(json)
@@ -201,10 +312,12 @@ def test():
     json["message"] = "Server running..."
     return jsonify(json)
 
+
 def loadFileConfig():
     with open('config.json') as f:
         data = json.load(f)
     return data
+
 
 if __name__ == '__main__':
     dataConfig = loadFileConfig()
