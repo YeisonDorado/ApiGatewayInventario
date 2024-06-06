@@ -97,7 +97,119 @@ def validarPermiso(endPoint, metodo, idRol):
 
 ################################--redireccionamiento permiso--######################################
 
+@app.route("/permisos", methods=['GET'])
+def getPermisos():
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/permisos'
+    response = requests.get(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/permisos", methods=['POST'])
+def crearPermiso():
+    data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/permisos'
+    response = requests.post(url, headers=headers, json=data)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/permisos/<string:id>", methods=['GET'])
+def getPermiso(id):
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/permisos/' + id
+    response = requests.get(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/permisos/<string:id>", methods=['PUT'])
+def modificarPermiso(id):
+    data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/permisos/' + id
+    response = requests.put(url, headers=headers, json=data)
+    json = response.json()
+    return jsonify(json)
+
+
+@app.route("/permisos/<string:id>", methods=['DELETE'])
+def eliminarPermiso(id):
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/permisos/' + id
+    response = requests.delete(url, headers=headers)
+
+    if response.status_code == 204:
+        # Si el estado es 204 No Content, devolver un mensaje adecuado
+        return jsonify({'message': 'Permiso eliminado exitosamente'}), 200
+    else:
+        try:
+            json_response = response.json() if response.content else None
+        except requests.exceptions.JSONDecodeError:
+            json_response = None
+
+        error_message = {
+            'error': 'Error al eliminar el permiso',
+            'details': json_response if json_response else 'Respuesta no es JSON válido o está vacía'
+        }
+        return jsonify(error_message), response.status_code
+
+
 ################################--redireccionamiento permiso-rol --###################################
+@app.route("/permisos-roles", methods=['GET'])
+def getPermisosRoles():
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/permisos-roles'
+    response = requests.get(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/permisos-roles/rol/<string:id_rol>/permiso/<string:id_permiso>", methods=['POST'])
+def crearPermisoRol(id_rol, id_permiso):
+    data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/permisos-roles/rol/' + id_rol + '/permiso/' + id_permiso
+    response = requests.post(url, headers=headers, json=data)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/permisos-roles/<string:id>", methods=['GET'])
+def getPermisoRol(id):
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/permisos-roles/' + id
+    response = requests.get(url, headers=headers)
+    print("respuesta del servidor", response)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/permisos-roles/<string:id_per_rol>/rol/<string:id_rol>/permiso/<string:id_permiso>", methods=['PUT'])
+def modificarPermisoRol(id_per_rol, id_rol, id_permiso):
+    data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/permisos-roles/' + id_per_rol + '/rol/' + id_rol + '/permiso/' + id_permiso
+    response = requests.put(url, headers=headers, json=data)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/permisos-roles/<string:id>", methods=['DELETE'])
+def eliminarPermisoRol(id):
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/permisos-roles/' + id
+    response = requests.delete(url, headers=headers)
+
+    if response.status_code == 204:
+        # Si el estado es 204 No Content, devolver un mensaje adecuado
+        return jsonify({'message': 'Permiso-rol eliminado exitosamente'}), 200
+    else:
+        try:
+            json_response = response.json() if response.content else None
+        except requests.exceptions.JSONDecodeError:
+            json_response = None
+
+        error_message = {
+            'error': 'Error al eliminar el permiso-rol',
+            'details': json_response if json_response else 'Respuesta no es JSON válido o está vacía'
+        }
+        return jsonify(error_message), response.status_code
 
 ##############################--REDIRECCIONAMIENTO DE MICROSERVICIO INVENTARIO--######################
 
