@@ -93,7 +93,127 @@ def validarPermiso(endPoint, metodo, idRol):
 
 ################################--redireccionamiento usuario--######################################
 
+@app.route("/usuarios", methods=['GET'])
+def getUsuarios():
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/usuarios'
+    response = requests.get(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+@app.route("/usuarios", methods=['POST'])
+def crearUsuario():
+    data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/usuarios'
+    response = requests.post(url, headers=headers, json=data)
+    json = response.json()
+    return jsonify(json)
+@app.route("/usuarios/<string:id>", methods=['GET'])
+def getUsuario(id):
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/usuarios/' + id
+    response = requests.get(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/usuarios/<string:id>", methods=['PUT'])
+def modificarUsuario(id):
+    data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/usuarios/' + id
+    response = requests.put(url, headers=headers, json=data)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/usuarios/<string:id>", methods=['DELETE'])
+def eliminarUsuario(id):
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/usuarios/' + id
+    response = requests.delete(url, headers=headers)
+    if response.status_code == 204:
+        # Si el estado es 204 No Content, devolver un mensaje adecuado
+        return jsonify({'message': 'Usuario eliminado exitosamente'}), 200
+    else:
+        try:
+            json_response = response.json() if response.content else None
+        except requests.exceptions.JSONDecodeError:
+            json_response = None
+
+        error_message = {
+            'error': 'Error al eliminar el usuario',
+            'details': json_response if json_response else 'Respuesta no es JSON válido o está vacía'
+        }
+        return jsonify(error_message), response.status_code
+
+@app.route("/usuarios/<string:id>/rol/<string:id_rol>", methods=['PUT'])
+def asignarRolAUsuario(id, id_rol):
+    #data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/usuarios/' + id + '/rol/' + id_rol
+    response = requests.put(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+
+
+
 ################################--redireccionamiento rol--######################################
+
+@app.route("/roles", methods=['GET'])
+def getRoles():
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/roles'
+    response = requests.get(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+@app.route("/roles", methods=['POST'])
+def crearRol():
+    data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/roles'
+    response = requests.post(url, headers=headers, json=data)
+    json = response.json()
+    return jsonify(json)
+@app.route("/roles/<string:id>", methods=['GET'])
+def getRol(id):
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/roles/' + id
+    response = requests.get(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/roles/<string:id>", methods=['PUT'])
+def modificarRol(id):
+    data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/roles/' + id
+    response = requests.put(url, headers=headers, json=data)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/roles/<string:id>", methods=['DELETE'])
+def eliminarRol(id):
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-security"] + '/roles/' + id
+    response = requests.delete(url, headers=headers)
+
+    if response.status_code == 204:
+        # Si el estado es 204 No Content, devolver un mensaje adecuado
+        return jsonify({'message': 'Rol eliminado exitosamente'}), 200
+    else:
+        try:
+            json_response = response.json() if response.content else None
+        except requests.exceptions.JSONDecodeError:
+            json_response = None
+
+        error_message = {
+            'error': 'Error al eliminar el rol',
+            'details': json_response if json_response else 'Respuesta no es JSON válido o está vacía'
+        }
+        return jsonify(error_message), response.status_code
+
+
+
 
 ################################--redireccionamiento permiso--######################################
 
@@ -260,6 +380,8 @@ def eliminarCliente(id):
     response = requests.delete(url, headers=headers)
     json = response.json()
     return jsonify(json)
+
+
 
 
 ##########################--redireccionamiento producto--#############################################
