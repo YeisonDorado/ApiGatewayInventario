@@ -538,6 +538,57 @@ def eliminarComprobante(id):
     return jsonify(json)
 
 
+
+##############################--REDIRECCIONAMIENTO DE MICROSERVICIO CONTABILIDAD--######################
+
+##########################--redireccionamiento categoria--#############################################
+
+@app.route("/categorias", methods=['GET'])
+def getCategorias():
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-contabilidad"] + '/categorias'
+    response = requests.get(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/categorias", methods=['POST'])
+def crearCategoria():
+    data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-contabilidad"] + '/categorias'
+    response = requests.post(url, headers=headers, json=data)
+    json = response.json()
+    return jsonify(json)
+@app.route("/categorias/<string:id>", methods=['GET'])
+def getCategoria(id):
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-contabilidad"] + '/categorias/' + id
+    response = requests.get(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/categorias/<string:id>", methods=['PUT'])
+def modificarCategoria(id):
+    data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-contabilidad"] + '/categorias/' + id
+    response = requests.put(url, headers=headers, json=data)
+    json = response.json()
+    return jsonify(json)
+@app.route("/categorias/<string:id>", methods=['DELETE'])
+def eliminarCategoria(id):
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-contabilidad"] + '/categorias/' + id
+    response = requests.delete(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+
+
+##########################--redireccionamiento Ingreso--#############################################
+
+##########################--redireccionamiento Egreso--#############################################
+
 ############################################################################################################
 
 @app.route("/", methods=['GET'])
