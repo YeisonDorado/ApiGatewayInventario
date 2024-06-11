@@ -640,6 +640,56 @@ def asignarCategoriaAIngreso(id, id_categoria):
 
 ##########################--redireccionamiento Egreso--#############################################
 
+@app.route("/egresos", methods=['GET'])
+def getEgresos():
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-contabilidad"] + '/egresos'
+    response = requests.get(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/egresos", methods=['POST'])
+def crearEgreso():
+    data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-contabilidad"] + '/egresos'
+    response = requests.post(url, headers=headers, json=data)
+    json = response.json()
+    return jsonify(json)
+@app.route("/egresos/<string:id>", methods=['GET'])
+def getEgreso(id):
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-contabilidad"] + '/egresos/' + id
+    response = requests.get(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/egresos/<string:id>", methods=['PUT'])
+def modificarEgreso(id):
+    data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-contabilidad"] + '/egresos/' + id
+    response = requests.put(url, headers=headers, json=data)
+    json = response.json()
+    return jsonify(json)
+@app.route("/egresos/<string:id>", methods=['DELETE'])
+def eliminarEgreso(id):
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-contabilidad"] + '/egresos/' + id
+    response = requests.delete(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/egresos/<string:id>/categoria/<string:id_categoria>", methods=['PUT'])
+def asignarCategoriaAEgreso(id, id_categoria):
+    #data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-contabilidad"] + '/egresos/' + id + '/categoria/' + id_categoria
+    response = requests.put(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+
 ############################################################################################################
 
 @app.route("/", methods=['GET'])
