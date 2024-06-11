@@ -587,6 +587,57 @@ def eliminarCategoria(id):
 
 ##########################--redireccionamiento Ingreso--#############################################
 
+@app.route("/ingresos", methods=['GET'])
+def getIngresos():
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-contabilidad"] + '/ingresos'
+    response = requests.get(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/ingresos", methods=['POST'])
+def crearIngreso():
+    data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-contabilidad"] + '/ingresos'
+    response = requests.post(url, headers=headers, json=data)
+    json = response.json()
+    return jsonify(json)
+@app.route("/ingresos/<string:id>", methods=['GET'])
+def getIngreso(id):
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-contabilidad"] + '/ingresos/' + id
+    response = requests.get(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/ingresos/<string:id>", methods=['PUT'])
+def modificarIngreso(id):
+    data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-contabilidad"] + '/ingresos/' + id
+    response = requests.put(url, headers=headers, json=data)
+    json = response.json()
+    return jsonify(json)
+@app.route("/ingresos/<string:id>", methods=['DELETE'])
+def eliminarIngresos(id):
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-contabilidad"] + '/ingresos/' + id
+    response = requests.delete(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+@app.route("/ingresos/<string:id>/categoria/<string:id_categoria>", methods=['PUT'])
+def asignarCategoriaAIngreso(id, id_categoria):
+    #data = request.get_json()
+    headers = {"Content-Type": "application/json; charset=utf-8"}
+    url = dataConfig["url-backend-contabilidad"] + '/ingresos/' + id + '/categoria/' + id_categoria
+    response = requests.put(url, headers=headers)
+    json = response.json()
+    return jsonify(json)
+
+
+
 ##########################--redireccionamiento Egreso--#############################################
 
 ############################################################################################################
